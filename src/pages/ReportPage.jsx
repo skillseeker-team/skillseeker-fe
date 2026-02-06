@@ -61,7 +61,7 @@ function ReportPage() {
       // Optimistic update
       setFeedback(prev => ({
         ...prev,
-        checklist: prev.checklist.map(item => 
+        checklistItems: prev.checklistItems.map(item => 
           (item.id === itemId) ? { ...item, status: 'DONE' } : item
         )
       }));
@@ -72,7 +72,7 @@ function ReportPage() {
       // Revert on failure
       setFeedback(prev => ({
         ...prev,
-        checklist: prev.checklist.map(item => 
+        checklistItems: prev.checklistItems.map(item => 
           (item.id === itemId) ? { ...item, status: currentStatus } : item
         )
       }));
@@ -99,7 +99,7 @@ function ReportPage() {
     ? "긴장감 관리 및 답변 구조화 필요"
     : "경험을 더 구체적인 수치로 증명하기");
     
-  const strategy = feedback?.checklist?.[0]?.text || 
+  const strategy = feedback?.checklistItems?.[0]?.renderedText || 
     (isBad
     ? "모의 면접을 통해 답변 인출 속도를 높이는 훈련이 필요합니다."
     : "STAR 기법을 적용해 답변 구조를 재점검하세요.");
@@ -250,8 +250,8 @@ function ReportPage() {
         </div>
 
         <div style={{ display: 'grid', gap: '12px' }}>
-          {feedback?.checklist ? (
-             feedback.checklist.map(item => (
+          {feedback?.checklistItems ? (
+             feedback.checklistItems.map(item => (
                 <div className="checklist-item" key={item.id || item.checklistId}>
                     <input 
                       type="checkbox" 
@@ -262,7 +262,7 @@ function ReportPage() {
                     <label htmlFor={`chk-${item.id}`}>
                     <span className="tag">Check</span>
                     <div>
-                        <strong>{item.text}</strong>
+                        <strong>{item.renderedText}</strong>
                     </div>
                     </label>
                 </div>
