@@ -47,7 +47,7 @@ function ReportPage() {
   };
 
   return (
-    <div className="container" style={{ maxWidth: '1000px' }}>
+    <div className="container">
       {/* Header */}
       <div style={{ marginBottom: '24px' }}>
         <button 
