@@ -48,7 +48,7 @@ const mockData = {
         icon: '📊',
         methodName: '평균 긴장도',
         badge: 'Info',
-        effectScore: summary?.avgScore?.avg5 || 0,
+        effectScore: 3.6,
         description: '낮을수록 안정적입니다 (1~5점 척도)',
         effectNote: '',
         isTopMethod: true,
@@ -58,26 +58,26 @@ const mockData = {
       icon: '💡',
       description: '긴장도가 높다면 호흡 조절과 가벼운 산책을 시도해보세요.',
     },
-  };
-
-  // Missions (Placeholder using checklistTop)
-  const missions = {
+  },
+  missions: {
     sectionDescription: '자주 등장하는 체크리스트 템플릿입니다.',
     categories: [
       {
         id: 1,
         icon: '📈',
         categoryName: '추천 체크리스트',
-        statusText: `상위 ${summary?.checklistTop?.length || 0}개`,
+        statusText: `상위 1개`,
         categoryDescription: '빈도 높은 개선 포인트',
-        missions: summary?.checklistTop?.map((item, idx) => ({
-          id: idx,
-          title: item.checklistId,
-          detail: `${item.count}회 추천됨`,
-          deadline: '상시',
-          status: '권장',
-          completed: false,
-        })) || [],
+        missions: [
+          {
+            id: 0,
+            title: 'CL_ANSWER_60SEC',
+            detail: '5회 추천됨',
+            deadline: '상시',
+            status: '권장',
+            completed: false,
+          }
+        ],
       }
     ],
     dailyCompletionRate: 54,
