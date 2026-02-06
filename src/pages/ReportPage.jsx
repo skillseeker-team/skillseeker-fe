@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Share2, Printer, ChevronLeft, Zap, Target, CheckCircle, AlertCircle, Wind, Pill, Heart, Moon, Music, Smile, Frown, Meh, Award, Activity } from 'lucide-react';
-import { getInterviewById, getFeedback, generateFeedback } from '../api/interviewApi';
+import { getInterviewById, getFeedback, generateFeedback, updateChecklist } from '../api/interviewApi';
 
 function ReportPage() {
   const { id } = useParams();
@@ -48,20 +48,48 @@ function ReportPage() {
     }
   }, [id]);
 
+  const handleChecklistToggle = async (itemId, currentStatus) => {
+    const newStatus = currentStatus === 'DONE' ? 'TODO' : 'DONE'; // Note: API might only support setting to DONE per spec (PATCH body: {"status":"DONE"}), but let's assume toggle or just DONE for now. 
+    // Spec says: PATCH /api/checklists/{itemId} with {"status":"DONE"}. It doesn't explicitly mention untoggling, but typically we want to be able to.
+    // However, error spec says "400 : 이미 DONE인 항목" might imply one-way. 
+    // Let's assume for MVP we only mark as DONE. If user wants to undo, we might need to check if API supports 'TODO'. 
+    // Since spec only shows "status":"DONE" in request example, I'll implement marking as DONE. 
+    
+    if (currentStatus === 'DONE') return; // If already done, maybe do nothing or try to untoggle if API supports it. Let's assume one-way for now based on spec "400: 이미 DONE인 항목".
+
+    try {
+      // Optimistic update
+      setFeedback(prev => ({
+        ...prev,
+        checklist: prev.checklist.map(item => 
+          (item.id === itemId) ? { ...item, status: 'DONE' } : item
+        )
+      }));
+
+      await updateChecklist(itemId, 'DONE');
+    } catch (err) {
+      console.error("Failed to update checklist", err);
+      // Revert on failure
+      setFeedback(prev => ({
+        ...prev,
+        checklist: prev.checklist.map(item => 
+          (item.id === itemId) ? { ...item, status: currentStatus } : item
+        )
+      }));
+      alert("체크리스트 업데이트 실패");
+    }
+  };
+
   if (loading) return <div className="container" style={{textAlign: 'center', paddingTop: '40px'}}>분석 중입니다...</div>;
   if (error) return <div className="container" style={{textAlign: 'center', paddingTop: '40px', color: 'red'}}>{error}<br/><button onClick={() => navigate('/feedbacks')}>목록으로</button></div>;
   if (!report) return null;
 
   // Adapt API data to UI
-  // Note: API doesn't store satisfaction (1-5) directly in current spec, 
-  // but we have atmosphereScore (1-5) and tensionChangeScore (1-5).
-  // We will use atmosphereScore for the chart for now or 0 if missing.
   const satisfactionScore = report.atmosphereScore || 3; 
 
   const isGood = satisfactionScore >= 4;
   const isBad = satisfactionScore <= 2;
   
-  // Use feedback data if available, else fallback to static logic based on scores
   const summaryText = feedback?.overallSummary?.join(' ') || 
     (isGood 
     ? "전반적으로 긍정적인 분위기에서 면접이 진행되었습니다. (AI 분석 대기 중)"
@@ -71,13 +99,6 @@ function ReportPage() {
     ? "긴장감 관리 및 답변 구조화 필요"
     : "경험을 더 구체적인 수치로 증명하기");
     
-  // Strategy isn't explicitly in feedback response in spec example (except checklist), 
-  // but let's check if 'strategyOne' exists or derive from checklist
-  // Spec says: "improvementOne": "개선 포인트 1문장"
-  // Spec says: "checklist": ...
-  // Let's use improvementOne for the "Improvement" section.
-  
-  // For Strategy section, we can use the first item of checklist or a generic message if missing
   const strategy = feedback?.checklist?.[0]?.text || 
     (isBad
     ? "모의 면접을 통해 답변 인출 속도를 높이는 훈련이 필요합니다."
@@ -232,7 +253,12 @@ function ReportPage() {
           {feedback?.checklist ? (
              feedback.checklist.map(item => (
                 <div className="checklist-item" key={item.id || item.checklistId}>
-                    <input type="checkbox" id={`chk-${item.id}`} defaultChecked={item.status === 'DONE'} />
+                    <input 
+                      type="checkbox" 
+                      id={`chk-${item.id}`} 
+                      checked={item.status === 'DONE'} 
+                      onChange={() => handleChecklistToggle(item.id, item.status)}
+                    />
                     <label htmlFor={`chk-${item.id}`}>
                     <span className="tag">Check</span>
                     <div>
