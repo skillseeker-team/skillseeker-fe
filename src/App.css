@@ -1288,3 +1288,427 @@ ol {
     width: 100%;
   }
 }
+
+
+.company-page-container {
+  display: flex;
+  min-height: calc(100vh - 60px);
+  /* Adjust for fixed header height */
+  background-color: var(--bg-gray);
+  padding-top: 24px;
+  /* Space below fixed header */
+  padding-left: 24px;
+  padding-right: 24px;
+  gap: 24px;
+}
+
+/* Left Column: Interested Companies List */
+.interested-companies-list {
+  flex: 0 0 320px;
+  /* Fixed width for the left column */
+  background: var(--white);
+  border-radius: 16px;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+}
+
+.interested-companies-list .list-header {
+  margin-bottom: 24px;
+}
+
+.interested-companies-list .list-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 4px;
+}
+
+.interested-companies-list .list-description {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+}
+
+.interested-companies-list .add-new-company-btn {
+  background: #eef2ff;
+  color: var(--primary-color);
+  border: 1px solid var(--primary-color);
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  margin-bottom: 12px;
+}
+
+.interested-companies-list .add-company-to-list-btn {
+  width: 100%;
+  padding: 12px;
+  border: 2px dashed var(--border-color);
+  background: #f8faff;
+  color: var(--primary-color);
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.company-items-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex-grow: 1;
+  /* Allow to take remaining space */
+  overflow-y: auto;
+  /* Enable scrolling if many items */
+}
+
+.company-list-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: var(--bg-gray);
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.company-list-item:hover {
+  border-color: var(--primary-color);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.company-list-item.active {
+  border-color: var(--primary-color);
+  background-color: #eef2ff;
+}
+
+.company-logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.company-info {
+  flex-grow: 1;
+}
+
+.company-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 2px;
+}
+
+.company-role,
+.company-date {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.d-day-badge {
+  background: #fee2e2;
+  color: #ef4444;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+
+/* Right Column: Company Detail */
+.company-detail-section {
+  flex: 1;
+  /* Take remaining space */
+  background: var(--white);
+  border-radius: 16px;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+}
+
+.company-detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.company-detail-header .status-label {
+  background: #eef2ff;
+  color: var(--primary-color);
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.action-buttons .btn {
+  background: none;
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+
+.action-buttons .btn:hover {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+.company-detail-name {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--text-dark);
+  margin-bottom: 4px;
+}
+
+.company-detail-role {
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  margin-bottom: 32px;
+}
+
+.info-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+.info-card {
+  background: var(--bg-gray);
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid var(--border-color);
+}
+
+.info-label {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.info-value {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+.detail-section {
+  margin-bottom: 40px;
+}
+
+.detail-section .section-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.detail-section .section-content {
+  font-size: 0.95rem;
+  color: var(--text-dark);
+  line-height: 1.6;
+  margin-bottom: 16px;
+  white-space: pre-wrap;
+  /* Preserve whitespace and line breaks */
+}
+
+.keyword-hint {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-align: right;
+  margin-top: -8px;
+  margin-bottom: 16px;
+}
+
+.strategy-section .strategy-header {
+  display: flex;
+  align-items: center;
+  background: #eef2ff;
+  border-radius: 12px;
+  padding: 12px 20px;
+  margin-bottom: 24px;
+  border: 1px solid var(--primary-color);
+  gap: 12px;
+}
+
+.strategy-badge {
+  background: var(--primary-color);
+  color: var(--white);
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.strategy-description {
+  font-size: 0.9rem;
+  color: var(--text-dark);
+  flex-grow: 1;
+}
+
+.missions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.mission-item {
+  display: flex;
+  align-items: flex-start;
+  cursor: pointer;
+  gap: 12px;
+  padding: 16px;
+  background: var(--bg-gray);
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+}
+
+.mission-item input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  accent-color: var(--primary-color);
+  margin-top: 2px;
+  /* Adjust for vertical alignment with text */
+}
+
+.mission-item:has(input:checked) .mission-text,
+.mission-item:has(input:checked) .mission-tip {
+  color: var(--color-text-muted, #999);
+  text-decoration: line-through;
+}
+
+.mission-checkbox {
+  cursor: pointer;
+  width: 18px;
+  height: 18px;
+}
+
+.mission-content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+}
+
+.mission-text {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 4px;
+}
+
+.mission-tip {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.mission-status-time {
+  font-size: 0.75rem;
+  color: var(--primary-color);
+  font-weight: 600;
+  background: #eef2ff;
+  padding: 4px 8px;
+  border-radius: 6px;
+  align-self: flex-start;
+  /* Align to the start of its flex container */
+  margin-top: 8px;
+}
+
+.mission-status-badge {
+  background: #e0e7ff;
+  color: var(--primary-color);
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  flex-shrink: 0;
+  align-self: flex-start;
+}
+
+.mission-status-badge.completed {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.add-mission-btn {
+  width: 100%;
+  padding: 12px;
+  border: 2px dashed var(--border-color);
+  background: #f8faff;
+  color: var(--primary-color);
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease-in-out;
+
+}
+
+.add-mission-btn:hover {
+  background: #edf2ff;
+  border-color: var(--primary-color);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .company-page-container {
+    flex-direction: column;
+    padding: 16px;
+  }
+
+  .interested-companies-list {
+    flex: 0 0 auto;
+    /* Allow left column to shrink */
+    width: 100%;
+  }
+
+  .info-cards-grid {
+    grid-template-columns: 1fr;
+    /* Single column for info cards on small screens */
+  }
+
+  .company-detail-name {
+    font-size: 1.5rem;
+  }
+}
