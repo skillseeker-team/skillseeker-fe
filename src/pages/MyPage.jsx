@@ -301,7 +301,6 @@ const MyPage = () => {
           <section className="card questions-card">
             <div className="card-header">
               <h3 className="card-title">나에게 자주 나오는 질문</h3>
-              <span className="card-header-tag">최근 10회 기준</span>
             </div>
             <ul className="questions-list">
               {frequentQuestions.questions.map((question) => (
