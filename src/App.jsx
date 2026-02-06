@@ -3,6 +3,7 @@ import { useForm, useFieldArray } from 'react-hook-form';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
 import { Sparkles, Plus, Send, User, ChevronDown, Activity, Heart, Music, Pill, Wind, Moon } from 'lucide-react';
 import ReportPage from './pages/ReportPage';
+import MyPage from './pages/MyPage';
 import FeedbackListPage from './pages/FeedbackListPage';
 import './App.css';
 
@@ -34,10 +35,10 @@ function InputForm() {
     // Generate a simple ID and Save
     const id = Date.now().toString();
     const newReport = { ...data, id };
-    
+
     const existingData = JSON.parse(localStorage.getItem('interview_records') || '[]');
     localStorage.setItem('interview_records', JSON.stringify([newReport, ...existingData]));
-    
+
     navigate(`/report/${id}`);
   };
 
@@ -164,14 +165,14 @@ function InputForm() {
                   가장 잘 답변한 질문
                 </label>
                 <div style={{ position: 'relative' }}>
-                  <select 
+                  <select
                     {...register('bestQuestionIndex')}
-                    style={{ 
-                      width: '100%', 
-                      padding: '12px 16px', 
-                      border: '1px solid var(--border-color)', 
-                      borderRadius: '8px', 
-                      fontSize: '0.95rem', 
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px',
+                      border: '1px solid var(--border-color)',
+                      borderRadius: '8px',
+                      fontSize: '0.95rem',
                       backgroundColor: 'white',
                       appearance: 'none',
                       cursor: 'pointer'
@@ -179,9 +180,9 @@ function InputForm() {
                   >
                     <option value="">선택해주세요</option>
                     {watch('questions')?.map((q, idx) => (
-                      <option 
-                        key={idx} 
-                        value={idx} 
+                      <option
+                        key={idx}
+                        value={idx}
                         disabled={watch('worstQuestionIndex') === String(idx)}
                       >
                         {`Q${idx + 1}. ${q.question ? (q.question.length > 20 ? q.question.substring(0, 20) + '...' : q.question) : '(질문 내용 없음)'}`}
@@ -198,14 +199,14 @@ function InputForm() {
                   아쉬움이 남는 질문
                 </label>
                 <div style={{ position: 'relative' }}>
-                  <select 
+                  <select
                     {...register('worstQuestionIndex')}
-                    style={{ 
-                      width: '100%', 
-                      padding: '12px 16px', 
-                      border: '1px solid var(--border-color)', 
-                      borderRadius: '8px', 
-                      fontSize: '0.95rem', 
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px',
+                      border: '1px solid var(--border-color)',
+                      borderRadius: '8px',
+                      fontSize: '0.95rem',
                       backgroundColor: 'white',
                       appearance: 'none',
                       cursor: 'pointer'
@@ -213,8 +214,8 @@ function InputForm() {
                   >
                     <option value="">선택해주세요</option>
                     {watch('questions')?.map((q, idx) => (
-                      <option 
-                        key={idx} 
+                      <option
+                        key={idx}
                         value={idx}
                         disabled={watch('bestQuestionIndex') === String(idx)}
                       >

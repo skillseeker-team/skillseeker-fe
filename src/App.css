@@ -258,3 +258,1033 @@ textarea:focus {
   color: var(--white);
   border-color: var(--primary-color);
 }
+
+
+
+
+
+/*
+* src/styles/MyPage.css
+* Pixel-perfect implementation for SkillSeeker Dashboard
+*/
+
+/* 1. CSS Reset and Base Setup */
+*,
+*::before,
+**::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  /* Extracted Colors from Design */
+  --color-brand-primary: #6D55FF;
+  /* Main interactive elements, some text */
+  --color-brand-light: #F3F1FF;
+  /* Light background for brand elements */
+  --color-background-main: #F9FAFC;
+  /* Overall page background */
+  --color-background-card: #FFFFFF;
+  /* Card background */
+  --color-background-accent-green: #EBFBF5;
+  /* Top mental care background */
+  --color-background-accent-yellow: #FEF3C7;
+  /* Mission status: 진행 중 */
+  --color-background-accent-success: #D1FAE5;
+  /* Mission status: 완료 */
+  --color-text-primary: #111827;
+  /* Main headings, bold text */
+  --color-text-secondary: #4B5563;
+  /* Body text, descriptions */
+  --color-text-tertiary: #9CA3AF;
+  /* Light text, metadata */
+  --color-text-white: #FFFFFF;
+  /* Text on primary buttons */
+  --color-border-primary: #E5E7EB;
+  /* Main card borders, dividers */
+  --color-border-secondary: #F3F4F6;
+  /* Progress bar background, light borders */
+  --color-accent-green-dark: #22C58A;
+  /* Top mental care border, text */
+  --color-accent-yellow-dark: #92400E;
+  /* Mission status: 진행 중 text */
+  --color-accent-success-dark: #065F46;
+  /* Mission status: 완료 text */
+  --color-star-gold: #F59E0B;
+  /* Star ratings */
+  --color-star-gray: #D1D5DB;
+  /* Unfilled stars */
+
+  /* Font-weights */
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* Fonts */
+  --font-family-main: "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+
+  /* Spacing */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-xxl: 48px;
+
+  /* Sizing */
+  --max-width-container: 100%;
+  /* Adjusted to design visual */
+
+  /* Style */
+  --border-radius-sm: 6px;
+  --border-radius-md: 12px;
+  --border-radius-lg: 16px;
+  --card-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+body {
+  background-color: var(--color-background-main);
+  font-family: var(--font-family-main);
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 16px;
+  /* Base font size */
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--color-text-primary);
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+/* 2. Main Layout */
+.dashboard-container {
+  max-width: var(--max-width-container);
+  margin: 0;
+  padding: 0;
+  padding-top: 80px;
+  /* Add padding for the fixed global header (60px height + 20px margin) */
+}
+
+/* Page Title Section */
+.page-title-section {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-lg) var(--space-xl);
+  background-color: var(--color-background-card);
+  border-bottom: 1px solid var(--color-border-primary);
+  margin-bottom: var(--space-lg);
+  margin-top: 0;
+  position: relative;
+  z-index: 0;
+}
+
+.page-title-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  margin-bottom: var(--space-md);
+  /* For smaller screens */
+}
+
+@media (min-width: 768px) {
+  .page-title-group {
+    margin-bottom: 0;
+  }
+}
+
+
+.page-title-main {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.page-icon {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  background-color: var(--color-brand-light);
+  border-radius: var(--border-radius-sm);
+  color: var(--color-brand-primary);
+  font-size: 16px;
+  font-weight: var(--font-weight-bold);
+}
+
+.page-title {
+  font-size: 28px;
+  /* Larger font size as per image */
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+}
+
+.page-subtitle {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  margin: 0;
+  padding-left: 42px;
+  /* Align with the title text */
+}
+
+.page-controls {
+  display: flex;
+  flex-wrap: wrap;
+  /* Allow controls to wrap */
+  align-items: center;
+  gap: var(--space-md);
+}
+
+/* Reusing existing .date-range-display and .btn styles */
+.date-range-display {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  background-color: var(--color-background-card);
+  padding: var(--space-sm) var(--space-md);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--border-radius-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  /* Default to single column for mobile first */
+  gap: var(--space-lg);
+}
+
+/* Desktop layout: two main columns */
+@media (min-width: 768px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr 1fr;
+    /* Left column wider than right */
+    grid-template-areas:
+      "profile profile"
+      "left-col right-col"
+      "missions missions";
+  }
+
+  .profile-card {
+    grid-area: profile;
+  }
+
+  .grid-col-left {
+    grid-area: left-col;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+    height: 100%;
+  }
+
+  .grid-col-right {
+    grid-area: right-col;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+  }
+
+  .missions-card {
+    grid-area: missions;
+  }
+}
+
+/* 3. Generic Card & Button Styles */
+.card {
+  background-color: var(--color-background-card);
+  border-radius: var(--border-radius-lg);
+  border: 1px solid var(--color-border-primary);
+  box-shadow: var(--card-shadow);
+  padding: var(--space-xl);
+  /* Increased padding for visual weight */
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-md);
+}
+
+.card-title {
+  font-size: 18px;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-xs, 8px);
+  display: block;
+}
+
+.card-description {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-lg);
+  line-height: 0.3;
+  text-align: left;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  border-radius: var(--border-radius-sm);
+  font-weight: var(--font-weight-semibold);
+  font-size: 14px;
+  padding: 8px 14px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  white-space: nowrap;
+  /* Prevent text wrapping */
+}
+
+.btn-primary {
+  background-color: var(--color-brand-primary);
+  color: var(--color-text-white);
+}
+
+.btn-primary:hover {
+  background-color: #5848d6;
+}
+
+.btn-secondary {
+  background-color: var(--color-background-card);
+  color: var(--color-text-secondary);
+  border-color: var(--color-border-primary);
+}
+
+.btn-secondary:hover {
+  background-color: var(--color-background-main);
+  border-color: #CBD5E0;
+}
+
+.btn-tertiary {
+  background: none;
+  color: var(--color-text-tertiary);
+}
+
+.btn-tertiary:hover {
+  background-color: var(--color-background-main);
+  color: var(--color-text-secondary);
+}
+
+.btn-primary-light {
+  background-color: var(--color-brand-light);
+  color: var(--color-brand-primary);
+  border: 1px solid var(--color-brand-primary);
+}
+
+.btn-primary-light:hover {
+  background-color: #E0DAFF;
+}
+
+
+/* 4. Profile Card */
+.profile-card {
+  display: flex;
+  flex-wrap: wrap;
+  /* Allow wrapping on smaller screens */
+  justify-content: space-between;
+  align-items: center;
+}
+
+.profile-summary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+  flex-grow: 1;
+  /* Allows it to take available space */
+  margin-bottom: var(--space-md);
+  /* Space below on smaller screens */
+}
+
+@media (min-width: 768px) {
+  .profile-summary {
+    margin-bottom: 0;
+  }
+}
+
+.profile-actions {
+  margin-left: auto;
+  /* Push to the right on small screens */
+  margin-bottom: var(--space-md);
+}
+
+@media (min-width: 768px) {
+  .profile-actions {
+    margin-bottom: 0;
+  }
+}
+
+.profile-image {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  border: 3px solid var(--color-background-card);
+  /* Inner border */
+  box-shadow: 0 0 0 2px var(--color-accent-green-dark);
+  /* Outer ring */
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.profile-details {
+  flex-grow: 1;
+}
+
+.profile-name {
+  font-size: 22px;
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--space-xs);
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  color: var(--color-text-primary);
+}
+
+.status-badge {
+  font-size: 12px;
+  font-weight: var(--font-weight-medium);
+  padding: 4px 10px;
+  border-radius: 99px;
+  /* Pill shape */
+  background-color: var(--color-brand-light);
+  color: var(--color-brand-primary);
+  flex-shrink: 0;
+}
+
+.profile-description {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-md);
+}
+
+.profile-stats {
+  width: 100%;
+  /* Take full width below other elements */
+  display: flex;
+  flex-wrap: wrap;
+  /* Allow stats to wrap */
+  justify-content: space-between;
+  border-top: 1px solid var(--color-border-primary);
+  padding-top: var(--space-md);
+  margin-top: var(--space-md);
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  flex: 1;
+  /* Distribute space */
+  min-width: 150px;
+  /* Ensure they don't get too small */
+}
+
+.stat-icon {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  background-color: var(--color-brand-light);
+  border-radius: 50%;
+  font-size: 18px;
+  color: var(--color-brand-primary);
+  flex-shrink: 0;
+}
+
+.stat-label {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-xs);
+  /* Space below label */
+}
+
+.stat-value {
+  font-size: 18px;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+}
+
+/* 5. Mistakes & Questions Cards */
+.questions-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.mistakes-card .card-header,
+.questions-card .card-header {
+  margin-bottom: var(--space-sm);
+}
+
+.mistakes-list,
+.questions-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  margin-top: var(--space-md);
+}
+
+.mistake-item {
+  display: grid;
+  grid-template-columns: 20px 1fr auto auto;
+  /* Rank | Text | Progress | Count */
+  align-items: center;
+  gap: var(--space-md);
+  font-size: 14px;
+}
+
+.mistake-rank {
+  color: var(--color-text-tertiary);
+  font-weight: var(--font-weight-semibold);
+  text-align: right;
+}
+
+.mistake-text {
+  color: var(--color-text-secondary);
+}
+
+.mistake-count {
+  color: var(--color-text-tertiary);
+  font-weight: var(--font-weight-medium);
+  text-align: right;
+  width: 30px;
+  /* Fixed width to prevent misalignment */
+}
+
+.progress-bar {
+  height: 8px;
+  background-color: var(--color-border-secondary);
+  border-radius: 99px;
+  overflow: hidden;
+  width: 100px;
+  /* Fixed width for consistent visual */
+}
+
+.progress-bar-fill {
+  height: 100%;
+  border-radius: 99px;
+}
+
+.card-header-tag {
+  font-size: 13px;
+  font-weight: var(--font-weight-medium);
+  padding: 4px 10px;
+  border-radius: 99px;
+  color: var(--color-text-tertiary);
+  background-color: var(--color-border-secondary);
+}
+
+.question-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+}
+
+.question-rank {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background-color: var(--color-brand-light);
+  color: var(--color-brand-primary);
+  font-size: 12px;
+  font-weight: var(--font-weight-bold);
+  margin-top: 2px;
+  /* Align with text baseline */
+}
+
+.question-content {
+  flex: 1;
+}
+
+.question-text {
+  font-size: 15px;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+  margin-bottom: var(--space-xs);
+}
+
+.question-tip {
+  font-size: 13px;
+  color: var(--color-brand-primary);
+}
+
+
+/* 6. Mental Care Card */
+.mental-care-methods {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.method-item {
+  padding: var(--space-md);
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--color-border-primary);
+}
+
+.top-method {
+  background-color: var(--color-background-accent-green);
+  border-color: var(--color-accent-green-dark);
+  padding: var(--space-lg);
+  /* Slightly more padding for top method */
+}
+
+.top-method-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-accent-green-dark);
+  margin-bottom: var(--space-md);
+}
+
+.top-method-header span:first-child {
+  /* Crown icon */
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.method-body {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-sm);
+}
+
+.method-name {
+  font-weight: var(--font-weight-semibold);
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: 15px;
+  color: var(--color-text-primary);
+}
+
+.method-rank-badge {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 99px;
+  background-color: var(--color-border-secondary);
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-medium);
+}
+
+.method-effect {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.effect-score {
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+}
+
+.star-rating {
+  color: var(--color-star-gold);
+  letter-spacing: 1px;
+}
+
+.star-rating span {
+  color: var(--color-star-gray);
+}
+
+/* Unfilled stars */
+
+.method-description {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+
+.recommended-routine {
+  margin-top: var(--space-lg);
+  background-color: var(--color-brand-light);
+  border-radius: var(--border-radius-md);
+  padding: var(--space-md);
+  text-align: center;
+  border: 1px solid var(--color-brand-primary);
+}
+
+.routine-title {
+  font-weight: var(--font-weight-bold);
+  color: var(--color-brand-primary);
+  margin-bottom: var(--space-sm);
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+}
+
+.routine-description {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-md);
+}
+
+/* 7. Missions Card */
+.missions-card .card-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-sm);
+}
+
+.missions-card .card-header>div {
+  display: flex;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+.mission-categories-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  /* Default to single column for mobile first */
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
+}
+
+@media (min-width: 768px) {
+  .mission-categories-grid {
+    grid-template-columns: 1fr 1fr;
+    /* Two columns on desktop */
+  }
+}
+
+.mission-category {
+  padding: var(--space-md);
+  /* Reduced padding to give more space for inner cards */
+  background-color: var(--color-background-main);
+  /* Lighter background than card */
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--color-border-secondary);
+}
+
+.mission-category-header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+
+.mission-category-icon {
+  font-size: 20px;
+  color: var(--color-brand-primary);
+  flex-shrink: 0;
+}
+
+.mission-category-title {
+  flex-grow: 1;
+}
+
+.mission-category-title h4 {
+  font-size: 16px;
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: 2px;
+  color: var(--color-text-primary);
+}
+
+.mission-category-title p {
+  font-size: 13px;
+  color: var(--color-text-tertiary);
+}
+
+.mission-category-status {
+  margin-left: auto;
+  font-size: 12px;
+  background-color: var(--color-border-primary);
+  /* Light gray background */
+  padding: 2px 8px;
+  border-radius: 99px;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+  font-weight: var(--font-weight-medium);
+}
+
+.mission-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.mission-item {
+  background-color: var(--color-background-card);
+  /* Make each item a card */
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--border-radius-md);
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  /* Lighter shadow for inner cards */
+  padding: var(--space-md);
+  display: flex;
+  align-items: flex-start;
+  /* Align checkbox to top */
+  gap: var(--space-sm);
+  transition: all 0.2s ease-in-out;
+}
+
+.mission-item:hover {
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+}
+
+.mission-item input[type="checkbox"] {
+  margin-top: 4px;
+  /* Align checkbox with the top of text */
+  width: 18px;
+  /* Slightly larger checkbox */
+  height: 18px;
+  accent-color: var(--color-brand-primary);
+  flex-shrink: 0;
+  /* Prevent checkbox from shrinking */
+}
+
+.mission-item-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  cursor: pointer;
+  /* Indicate label is clickable */
+}
+
+.mission-title {
+  font-size: 14px;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-xs);
+}
+
+.mission-detail {
+  font-size: 12px;
+  color: var(--color-text-tertiary);
+  margin-bottom: var(--space-xs);
+}
+
+.mission-deadline {
+  font-size: 12px;
+  color: var(--color-text-tertiary);
+}
+
+.mission-status-tag {
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 99px;
+  white-space: nowrap;
+  font-weight: var(--font-weight-medium);
+  flex-shrink: 0;
+  align-self: flex-start;
+  /* Align tag to the top */
+}
+
+/* Specific status tag colors */
+.mission-status-tag.진행-중 {
+  background-color: var(--color-background-accent-yellow);
+  color: var(--color-accent-yellow-dark);
+}
+
+.mission-status-tag.시작-전 {
+  background-color: var(--color-border-secondary);
+  color: var(--color-text-secondary);
+}
+
+.mission-status-tag.완료 {
+  background-color: var(--color-background-accent-success);
+  color: var(--color-accent-success-dark);
+}
+
+.mission-item.completed .mission-item-content {
+  color: var(--color-text-tertiary);
+}
+
+.mission-item.completed .mission-title,
+.mission-item.completed .mission-detail,
+.mission-item.completed .mission-deadline {
+  text-decoration: line-through;
+}
+
+/* Ensure completed checkbox is styled */
+.mission-item.completed input[type="checkbox"] {
+  accent-color: var(--color-accent-green-dark);
+}
+
+.missions-footer {
+  display: flex;
+  flex-wrap: wrap;
+  /* Allow wrapping */
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--color-border-primary);
+  padding-top: var(--space-lg);
+  margin-top: var(--space-lg);
+  gap: var(--space-md);
+  /* Space between items when wrapped */
+}
+
+.daily-progress {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex-grow: 1;
+  /* Allow it to take up space */
+  min-width: 250px;
+  /* Ensure minimum width */
+}
+
+.daily-progress label {
+  font-size: 14px;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+}
+
+.daily-progress .progress-bar {
+  flex-grow: 1;
+  /* Progress bar takes remaining space */
+  height: 8px;
+  background-color: var(--color-border-secondary);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.daily-progress .progress-bar-fill {
+  background-color: var(--color-brand-primary);
+  height: 100%;
+  border-radius: 99px;
+}
+
+.daily-progress .progress-percentage {
+  font-size: 14px;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-brand-primary);
+  width: 35px;
+  /* Fixed width for percentage text */
+  text-align: right;
+  flex-shrink: 0;
+}
+
+@media (max-width: 767px) {
+  .header-main {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-md);
+  }
+
+  .header-controls {
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    gap: var(--space-sm);
+  }
+
+  .date-range-display,
+  .btn {
+    width: 100%;
+  }
+
+  .dashboard-subtitle {
+    font-size: 20px;
+  }
+
+  .profile-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .profile-summary {
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-md);
+  }
+
+  .profile-actions {
+    width: 100%;
+    margin-bottom: var(--space-md);
+  }
+
+  .profile-actions .btn-secondary {
+    width: 100%;
+  }
+
+  .profile-stats {
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  .stat-item {
+    width: 100%;
+    gap: var(--space-sm);
+    justify-content: flex-start;
+  }
+
+  .mistake-item {
+    grid-template-columns: 20px 1fr 80px 30px;
+    /* Adjust for smaller screen */
+    gap: var(--space-sm);
+  }
+
+  .progress-bar {
+    width: 80px;
+  }
+
+  .missions-card .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-sm);
+  }
+
+  .missions-card .card-header>div {
+    flex-direction: column;
+    width: 100%;
+    gap: var(--space-sm);
+  }
+
+  .missions-card .card-header .btn {
+    width: 100%;
+  }
+
+  .mission-categories-grid {
+    grid-template-columns: 1fr;
+    /* Single column on mobile */
+  }
+
+  .missions-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-md);
+  }
+
+  .daily-progress {
+    width: 100%;
+  }
+
+  .missions-footer .btn-secondary {
+    width: 100%;
+  }
+}
