@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import '../styles/MyPage.css';
+import '../App.css';
 
 const mockData = {
   header: {
