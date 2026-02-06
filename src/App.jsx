@@ -326,7 +326,7 @@ function Header() {
       <nav className="nav">
         <Link to="/feedbacks" className={`nav-item ${isActive('/feedbacks')}`}>피드백</Link>
         <Link to="#" className="nav-item">기업 공고</Link>
-        <Link to="#" className="nav-item">마이페이지</Link>
+        <Link to="/mypage" className={`nav-item ${isActive('/mypage')}`}>마이페이지</Link>
         <div className="profile-img"></div>
       </nav>
     </header>
@@ -347,6 +347,8 @@ function App() {
             <Route path="/feedbacks" element={<FeedbackListPage />} />
             {/* 리포트 상세 */}
             <Route path="/report/:id" element={<ReportPage />} />
+            {/* 마이페이지 */}
+            <Route path="/mypage" element={<MyPage />} />
           </Routes>
         </main>
       </div>

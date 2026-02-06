@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import '../styles/MyPage.css';
 
 const mockData = {
   header: {
@@ -223,27 +222,6 @@ const MyPage = () => {
 
   return (
     <div className="dashboard-container">
-      {/* Page Title Section - formerly dashboard-header */}
-      <section className="page-title-section">
-        <div className="page-title-group">
-          <div className="page-title-main">
-            <span className="page-icon">💬</span>
-            <h2 className="page-title">마이페이지</h2>
-          </div>
-          <p className="page-subtitle">통계 & 인사이트 대시보드</p>
-        </div>
-        <div className="page-controls">
-          <div className="date-range-display">
-            <span>🗓️</span>
-            분석 기간 · {header.analysisPeriod}
-          </div>
-          <button className="btn btn-primary">
-            <span>🔄</span>
-            데이터 새로고침
-          </button>
-        </div>
-      </section>
-
       <main className="dashboard-grid">
         {/* User Info Section (Full Width) */}
         <section className="card profile-card">
