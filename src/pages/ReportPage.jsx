@@ -1,42 +1,87 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Share2, Printer, ChevronLeft, Zap, Target, CheckCircle, AlertCircle, Wind, Pill, Heart, Moon, Music, Smile, Frown, Meh, Award, Activity } from 'lucide-react';
+import { getInterviewById, getFeedback, generateFeedback } from '../api/interviewApi';
 
 function ReportPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [report, setReport] = useState(null);
+  const [feedback, setFeedback] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const reports = JSON.parse(localStorage.getItem('interview_records') || '[]');
-    const found = reports.find(r => r.id === id);
-    if (found) {
-      setReport(found);
-    } else {
-      alert("리포트를 찾을 수 없습니다.");
-      navigate('/feedbacks');
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        // 1. Get Interview Data
+        const interviewData = await getInterviewById(id);
+        setReport(interviewData);
+
+        // 2. Get or Generate Feedback
+        // First try to get existing feedback
+        try {
+            const feedbackData = await getFeedback(id);
+            setFeedback(feedbackData);
+        } catch (e) {
+            // If 404 or empty, try generating
+            console.log("Feedback not found, generating...");
+            try {
+                const newFeedback = await generateFeedback(id);
+                setFeedback(newFeedback);
+            } catch (genErr) {
+                console.error("Failed to generate feedback", genErr);
+                // Fallback to null feedback, UI can show partial data or static analysis
+            }
+        }
+      } catch (err) {
+        console.error("Error loading report:", err);
+        setError("리포트를 불러올 수 없습니다.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchData();
     }
-  }, [id, navigate]);
+  }, [id]);
 
-  if (!report) return <div className="container">Loading...</div>;
+  if (loading) return <div className="container" style={{textAlign: 'center', paddingTop: '40px'}}>분석 중입니다...</div>;
+  if (error) return <div className="container" style={{textAlign: 'center', paddingTop: '40px', color: 'red'}}>{error}<br/><button onClick={() => navigate('/feedbacks')}>목록으로</button></div>;
+  if (!report) return null;
 
-  // Mock Analysis Logic (Simple Rules based on input)
-  const isGood = report.satisfaction >= 4;
-  const isBad = report.satisfaction <= 2;
+  // Adapt API data to UI
+  // Note: API doesn't store satisfaction (1-5) directly in current spec, 
+  // but we have atmosphereScore (1-5) and tensionChangeScore (1-5).
+  // We will use atmosphereScore for the chart for now or 0 if missing.
+  const satisfactionScore = report.atmosphereScore || 3; 
+
+  const isGood = satisfactionScore >= 4;
+  const isBad = satisfactionScore <= 2;
   
-  const summaryText = isGood 
-    ? "전반적으로 자신감 있게 답변했으며, 준비한 역량을 충분히 보여준 면접이었습니다. 특히 직무 관련 경험을 설명할 때 구체적인 성과를 언급한 점이 돋보였습니다. 다만 일부 예상치 못한 질문에서 잠시 당황하는 모습이 보였으나, 빠르게 평정심을 되찾고 논리적으로 대응했습니다."
-    : isBad
-      ? "긴장감으로 인해 준비한 내용을 충분히 전달하지 못한 아쉬움이 남습니다. 핵심 질문에 대해 답변이 다소 짧게 끝나는 경향이 있었으며, 두괄식 표현이 부족하여 메시지 전달력이 약해질 수 있었습니다. 하지만 태도 면에서는 끝까지 경청하는 좋은 자세를 유지했습니다."
-      : "무난하게 진행된 면접이었으나, 답변의 구체성이 다소 부족했습니다. 질문의 의도는 잘 파악했으나, 이를 뒷받침할 경험적 근거를 제시하는 데 시간이 걸렸습니다. 분위기는 편안했으나, 강렬한 인상을 남기기 위한 '한 방'이 필요한 시점입니다.";
+  // Use feedback data if available, else fallback to static logic based on scores
+  const summaryText = feedback?.overallSummary?.join(' ') || 
+    (isGood 
+    ? "전반적으로 긍정적인 분위기에서 면접이 진행되었습니다. (AI 분석 대기 중)"
+    : "아쉬움이 남는 면접이었지만 개선점을 찾을 수 있습니다. (AI 분석 대기 중)");
 
-  const improvement = isBad
-    ? "답변이 막힐 때 '음...', '어...' 하는 습관 줄이기"
-    : "성과를 수치로 표현하여 신뢰도 높이기";
+  const improvement = feedback?.improvementOne || (isBad
+    ? "긴장감 관리 및 답변 구조화 필요"
+    : "경험을 더 구체적인 수치로 증명하기");
     
-  const strategy = isBad
+  // Strategy isn't explicitly in feedback response in spec example (except checklist), 
+  // but let's check if 'strategyOne' exists or derive from checklist
+  // Spec says: "improvementOne": "개선 포인트 1문장"
+  // Spec says: "checklist": ...
+  // Let's use improvementOne for the "Improvement" section.
+  
+  // For Strategy section, we can use the first item of checklist or a generic message if missing
+  const strategy = feedback?.checklist?.[0]?.text || 
+    (isBad
     ? "모의 면접을 통해 답변 인출 속도를 높이는 훈련이 필요합니다."
-    : "STAR 기법(Situation, Task, Action, Result)을 적용해 답변 구조를 재점검하세요.";
+    : "STAR 기법을 적용해 답변 구조를 재점검하세요.");
 
   const mentalMap = {
     breath: { label: '호흡 조절', icon: <Wind size={16} /> },
@@ -69,8 +114,8 @@ function ReportPage() {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <div>
             <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
-              <span className="badge">{report.date}</span>
-              <span className="badge" style={{ background: '#f3f4f6', color: '#374151' }}>{report.position}</span>
+              <span className="badge">{report.interviewDate}</span>
+              <span className="badge" style={{ background: '#f3f4f6', color: '#374151' }}>{report.role}</span>
             </div>
             <h1 style={{ fontSize: '2rem', margin: '0' }}>{report.company} 면접 분석 리포트</h1>
           </div>
@@ -93,18 +138,18 @@ function ReportPage() {
                 fill="none" 
                 stroke="#6345ff" 
                 strokeWidth="3" 
-                strokeDasharray={`${report.satisfaction * 20}, 100`} 
+                strokeDasharray={`${satisfactionScore * 20}, 100`} 
               />
             </svg>
             <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', textAlign: 'center' }}>
-              <div style={{ fontSize: '0.8rem', color: '#666' }}>만족도</div>
-              <div style={{ fontSize: '1.8rem', fontWeight: 'bold', color: '#6345ff' }}>{report.satisfaction * 20}</div>
+              <div style={{ fontSize: '0.8rem', color: '#666' }}>분위기 점수</div>
+              <div style={{ fontSize: '1.8rem', fontWeight: 'bold', color: '#6345ff' }}>{satisfactionScore * 20}</div>
             </div>
           </div>
           <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', fontSize: '0.9rem', color: '#555' }}>
             <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-              {report.atmosphere >= 4 ? <Smile size={16} color="#10b981" /> : report.atmosphere <= 2 ? <Frown size={16} color="#ef4444" /> : <Meh size={16} color="#f59e0b" />}
-              분위기 {report.atmosphere}/5
+              {report.atmosphereScore >= 4 ? <Smile size={16} color="#10b981" /> : report.atmosphereScore <= 2 ? <Frown size={16} color="#ef4444" /> : <Meh size={16} color="#f59e0b" />}
+              분위기 {report.atmosphereScore}/5
             </span>
           </div>
         </div>
@@ -162,29 +207,13 @@ function ReportPage() {
           </p>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '24px' }}>
-            {report.mentalCare && report.mentalCare.length > 0 ? (
-              report.mentalCare.map(key => {
-                const info = mentalMap[key] || { label: key, icon: <Activity size={16} /> };
-                return (
-                  <div key={key} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', background: '#f9fafb', borderRadius: '8px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                      <div style={{ background: 'white', padding: '8px', borderRadius: '50%', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
-                        {info.icon}
-                      </div>
-                      <span style={{ fontWeight: '600', color: '#374151' }}>{info.label}</span>
-                    </div>
-                    {/* Mock Effect Tag based on tension */}
-                    <span style={{ fontSize: '0.8rem', padding: '4px 8px', borderRadius: '12px', background: report.tension >= 4 ? '#d1fae5' : '#fee2e2', color: report.tension >= 4 ? '#059669' : '#b91c1c' }}>
-                      {report.tension >= 4 ? '효과 좋음' : '효과 미미'}
-                    </span>
-                  </div>
-                );
-              })
-            ) : (
-              <div style={{ padding: '20px', textAlign: 'center', color: '#999', fontSize: '0.9rem', background: '#f9fafb', borderRadius: '8px' }}>
-                기록된 컨디션 관리 활동이 없습니다.
-              </div>
-            )}
+            {/* Note: mentalCare data is NOT in the API spec yet. Showing placeholder or static data if not present. 
+                If we want to persist this, backend needs update. 
+                For now, we'll hide if empty or show a placeholder message. */}
+            
+            <div style={{ padding: '20px', textAlign: 'center', color: '#999', fontSize: '0.9rem', background: '#f9fafb', borderRadius: '8px' }}>
+              (API 미지원) 컨디션 관리 기록 기능 준비 중입니다.
+            </div>
           </div>
         </div>
       </div>
@@ -200,44 +229,32 @@ function ReportPage() {
         </div>
 
         <div style={{ display: 'grid', gap: '12px' }}>
-          {/* Patch Mission (Fixed) */}
-          <div className="checklist-item">
-            <input type="checkbox" id="m1" />
-            <label htmlFor="m1">
-              <span className="tag patch">Patch</span>
-              <div>
-                <strong>'공백기' 질문에 대한 답변 스크립트 작성하기</strong>
-                <p>2~3개의 버전으로 작성 후, 가장 자연스러운 버전을 선택해 말로 5회 이상 반복 연습합니다.</p>
-              </div>
-            </label>
-            <span className="time">약 25분</span>
-          </div>
-
-          {/* Mental Mission (Fixed) */}
-          <div className="checklist-item">
-            <input type="checkbox" id="m2" />
-            <label htmlFor="m2">
-              <span className="tag mental">Mental</span>
-              <div>
-                <strong>면접 후 스스로에게 칭찬 3가지 적어보기</strong>
-                <p>결과와 상관없이 오늘 내가 잘한 점을 찾아 긍정적인 마무리를 짓습니다.</p>
-              </div>
-            </label>
-            <span className="time">약 10분</span>
-          </div>
-
-           {/* Additional Checklist */}
-           <div className="checklist-item">
-            <input type="checkbox" id="m3" />
-            <label htmlFor="m3">
-              <span className="tag">준비</span>
-              <div>
-                <strong>자기소개 60초/90초 버전으로 구조화하기</strong>
-                <p>"결론 → 핵심 경험 2개 → 현재 강점" 순으로 스크립트를 만들고, 녹음 후 말 속도를 점검합니다.</p>
-              </div>
-            </label>
-            <span className="time">약 30분</span>
-          </div>
+          {feedback?.checklist ? (
+             feedback.checklist.map(item => (
+                <div className="checklist-item" key={item.id || item.checklistId}>
+                    <input type="checkbox" id={`chk-${item.id}`} defaultChecked={item.status === 'DONE'} />
+                    <label htmlFor={`chk-${item.id}`}>
+                    <span className="tag">Check</span>
+                    <div>
+                        <strong>{item.text}</strong>
+                    </div>
+                    </label>
+                </div>
+             ))
+          ) : (
+            <>
+                {/* Fallback Static Checklist */}
+                <div className="checklist-item">
+                    <input type="checkbox" id="m1" />
+                    <label htmlFor="m1">
+                    <span className="tag patch">Patch</span>
+                    <div>
+                        <strong>(분석 대기 중) 답변 스크립트 정리하기</strong>
+                    </div>
+                    </label>
+                </div>
+            </>
+          )}
         </div>
       </div>
       

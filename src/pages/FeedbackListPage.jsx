@@ -1,15 +1,34 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Briefcase } from 'lucide-react';
+import { getInterviews } from '../api/interviewApi';
 
 function FeedbackListPage() {
   const navigate = useNavigate();
   const [reports, setReports] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const data = JSON.parse(localStorage.getItem('interview_records') || '[]');
-    setReports(data);
+    const fetchInterviews = async () => {
+      try {
+        setLoading(true);
+        const data = await getInterviews();
+        // API returns { items: [...] }
+        setReports(data.items || []);
+      } catch (err) {
+        console.error('Error fetching interviews:', err);
+        setError('면접 기록을 불러오는 중 오류가 발생했습니다.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchInterviews();
   }, []);
+
+  if (loading) return <div className="container" style={{ textAlign: 'center', paddingTop: '40px' }}>Loading...</div>;
+  if (error) return <div className="container" style={{ textAlign: 'center', paddingTop: '40px', color: 'red' }}>{error}</div>;
 
   return (
     <div className="container">
@@ -66,7 +85,7 @@ function FeedbackListPage() {
                   padding: '4px 8px', 
                   borderRadius: '4px' 
                 }}>
-                  {report.date}
+                  {report.interviewDate}
                 </span>
                 <ArrowRight size={18} color="var(--text-muted)" />
               </div>
@@ -75,13 +94,15 @@ function FeedbackListPage() {
               
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '4px' }}>
                 <Briefcase size={14} />
-                {report.position || '직무 미입력'}
+                {report.role || '직무 미입력'}
               </div>
 
+              {/* Satisfaction is not in list API, removing or keeping static if needed. 
+                  If API list item doesn't have score, we might hide it or show createdAt */}
               <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px solid #f0f0f0', display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem' }}>
-                <span style={{color: 'var(--text-muted)'}}>만족도</span>
-                <span style={{fontWeight: '600', color: report.satisfaction >= 4 ? 'var(--primary-color)' : '#666'}}>
-                  {report.satisfaction}/5
+                <span style={{color: 'var(--text-muted)'}}>등록일</span>
+                <span style={{fontWeight: '600', color: '#666'}}>
+                  {new Date(report.createdAt).toLocaleDateString()}
                 </span>
               </div>
             </div>
