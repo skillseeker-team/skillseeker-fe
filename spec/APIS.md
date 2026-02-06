@@ -35,6 +35,8 @@ Swagger UI: `http://{host}/swagger-ui.html`
 
 ---
 
+## 
+
 ## 1. Interview (면접)
 
 ### 1-1. 면접 생성
@@ -51,7 +53,9 @@ POST /api/interviews
   "role": "백엔드 개발자",
   "interviewDate": "2025-01-15",
   "atmosphereScore": null,
-  "tensionChangeScore": 7,
+  "tensionChangeScore": 4,
+  "conditionMethods": ["breathing", "sleep_management"],
+  "satisfactionScore": 3,
   "memo": "첫 면접이라 많이 긴장함",
   "questions": [
     {
@@ -76,13 +80,25 @@ POST /api/interviews
 | role | String | O | 포지션 |
 | interviewDate | String (date) | O | 면접일 |
 | atmosphereScore | Integer | X | 분위기 점수 |
-| tensionChangeScore | Integer | X | 긴장도 점수 (둘 다 보내면 이것만 저장) |
+| tensionChangeScore | Integer | X | 긴장도 변화 점수 1~5 (둘 다 보내면 이것만 저장) |
+| conditionMethods | String[] | X | 컨디션 조절 방법 (복수 선택 가능) |
+| satisfactionScore | Integer | X | 면접 체감 완성도 1~5 |
 | memo | String | X | 메모 |
 | questions | Array | O | 최소 1개, **정확히 1개가 `isHardest: true`여야 함** |
 | questions[].questionText | String | O | 질문 내용 |
 | questions[].answerText | String | X | 답변 내용 |
 | questions[].isHardest | Boolean | X | 가장 어려웠던 질문 (기본 false) |
 | questions[].isBest | Boolean | X | 가장 잘 답한 질문 (기본 false) |
+
+**conditionMethods 허용 값:**
+
+| key | 한글 |
+| --- | --- |
+| `breathing` | 호흡 조절 |
+| `medication` | 약물 복용 |
+| `mind_control` | 마인드 컨트롤 |
+| `sleep_management` | 수면 관리 |
+| `music` | 음악 감상 |
 
 **Response `201 Created`**
 
@@ -92,7 +108,9 @@ POST /api/interviews
   "company": "네이버",
   "role": "백엔드 개발자",
   "interviewDate": "2025-01-15",
-  "tension": "7",
+  "tension": "4",
+  "conditionMethods": ["breathing", "sleep_management"],
+  "satisfactionScore": 3,
   "memo": "첫 면접이라 많이 긴장함",
   "createdAt": "2025-01-15T14:30:00",
   "questions": [
@@ -112,6 +130,8 @@ POST /api/interviews
 **에러**
 
 - `400` : hardest가 0개 또는 2개 이상 / 필수 필드 누락
+
+---
 
 ---
 
@@ -458,148 +478,4 @@ PENDING → PROCESSING → DONE
 
 ```
 TODO → DONE
-```
-
-[API 명세서 ](https://www.notion.so/2ffc7324215a81d6ae92ee7914fb8497?pvs=21)
-
-[이미지를 받아 OCR 후 러닝기록 저장](https://www.notion.so/OCR-2ffc7324215a8171abd8c20478deb230?pvs=21)
-
-아래는 핵심 엔드포인트들(너희 MVP 기준):
-
-## **1) 인터뷰 생성**
-
-**POST** **`/api/interviews`**
-
-### **Request**
-
-```json
-{"interviewDate":"2026-02-07","company":"OO","role":"Backend","atmosphereScore":2,"tensionChangeScore":4,"memo":"기억나는 흐름...","questions":[{"questionText":"트랜잭션 격리수준?","answerText":"…","isHardest":true,"isBest":false},{"questionText":"HTTP vs HTTPS?","answerText":"…","isHardest":false,"isBest":true}]}
-```
-
-### **Response 201**
-
-```json
-{"id":1,"interviewDate":"2026-02-07","company":"OO","role":"Backend","atmosphereScore":2,"tensionChangeScore":4,"memo":"기억나는 흐름...","questions":[{"id":11,"questionText":"트랜잭션 격리수준?","answerText":"…","isHardest":true,"isBest":false,"category":null,"questionKey":null},{"id":12,"questionText":"HTTP vs HTTPS?","answerText":"…","isHardest":false,"isBest":true,"category":null,"questionKey":null}],"createdAt":"2026-02-07T12:00:00Z"}
-```
-
-### **Error 400 (hardest가 정확히 1개가 아니면)**
-
-```json
-{"code":"VALIDATION_ERROR","message":"hardest question must be exactly 1"}
-```
-
----
-
-## **2) 인터뷰 목록**
-
-**GET** **`/api/interviews`**
-
-### **Response 200**
-
-```json
-{"items":[{"id":1,"interviewDate":"2026-02-07","company":"OO","role":"Backend","createdAt":"..."}]}
-```
-
----
-
-## **3) 인터뷰 상세**
-
-**GET** **`/api/interviews/{id}`**
-
-### **Response 200**
-
-(POST 응답과 동일 구조)
-
----
-
-## **4) 인터뷰 삭제**
-
-**DELETE** **`/api/interviews/{id}`**
-
-### **Response 204 (body 없음)**
-
----
-
-## **5) 피드백 생성(AI)**
-
-**POST** **`/api/interviews/{id}/feedback:ai`**
-
-### **Response 200**
-
-```json
-{"interviewId":1,"status":"DONE","overallSummary":["요약 1","요약 2","요약 3"],"improvementOne":"개선 포인트 1문장","weaknessTags":[{"tag":"evidence","label":"근거 부족","desc":"사례·수치·근거가 부족함","count":null}],"checklist":[{"id":101,"checklistId":"CL_ANSWER_60SEC","text":"트랜잭션 격리수준? 60초 답변 카드 만들기","status":"TODO"}],"questions":[{"id":11,"category":"database","questionKey":"transaction_isolation_level"}],"createdAt":"...","updatedAt":"..."}
-```
-
-### **Response 200 (PROCESSING 가능하게 할 수도 있음)**
-
-```json
-{"interviewId":1,"status":"PROCESSING"}
-```
-
-### **Response 200 (FAILED)**
-
-```json
-{"interviewId":1,"status":"FAILED","message":"LLM output invalid. Please retry."}
-```
-
----
-
-## **6) 피드백 조회**
-
-**GET** **`/api/interviews/{id}/feedback`**
-
-응답은 위와 동일
-
----
-
-## **7) 체크리스트 완료 처리**
-
-**PATCH** **`/api/checklists/{itemId}`**
-
-### **Request**
-
-```json
-{"status":"DONE"}
-```
-
-### **Response 200**
-
-```json
-{"id":101,"status":"DONE"}
-```
-
----
-
-## **8) 마이페이지 통계**
-
-**GET** **`/api/mypage/summary`**
-
-### **Response 200**
-
-```json
-{"topMistakes":[{"tag":"evidence","label":"근거 부족","desc":"사례·수치·근거가 부족함","count":4}],"topQuestionsByCategory":{"database":[{"questionKey":"transaction_isolation_level","count":3}]},"avgLast5":{"type":"tension","avg":3.6},"checklistTop":[{"checklistId":"CL_ANSWER_60SEC","count":5}],"checklistIncompleteCount":7}
-```
-
----
-
-## **9) 마이페이지 내러티브**
-
-**GET** **`/api/mypage/narrative`**
-
-### **Response 200**
-
-```json
-{"lines":["최근 반복 실수는 '근거 부족'이 가장 많아요.","DB 질문이 자주 등장하니 transaction_isolation_level 카드부터 고치면 효율적이에요."]}
-```
-
----
-
-## **10) (옵션) 데모 데이터 시드**
-
-**POST** **`/api/demo/seed`**
-
-### **Response 200**
-
-```json
-{"ok":true,"createdInterviews":6}
 ```

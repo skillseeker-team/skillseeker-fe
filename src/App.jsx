@@ -43,6 +43,15 @@ function InputForm() {
     }
 
     try {
+      // Map UI mentalCare IDs to API enum values
+      const mentalCareMap = {
+        breath: 'breathing',
+        meds: 'medication',
+        mind: 'mind_control',
+        sleep: 'sleep_management',
+        music: 'music'
+      };
+
       // Map form data to API payload
       const payload = {
         interviewDate: data.date,
@@ -50,6 +59,8 @@ function InputForm() {
         role: data.position,
         atmosphereScore: Number(data.atmosphere),
         tensionChangeScore: Number(data.tension),
+        conditionMethods: data.mentalCare.map(id => mentalCareMap[id]),
+        satisfactionScore: Number(data.satisfaction),
         memo: data.review,
         questions: data.questions.map((q, index) => ({
           questionText: q.question,
