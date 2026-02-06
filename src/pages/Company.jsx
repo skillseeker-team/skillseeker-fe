@@ -99,7 +99,6 @@ const Company = () => {
         <div className="list-header">
           <h2 className="list-title">관심 기업 리스트</h2>
           <p className="list-description">지원 중인 공고를 한눈에 관리하세요</p>
-          <button className="add-new-company-btn">+ 새 공고</button>
         </div>
         <button className="add-company-to-list-btn">+ 새 공고 등록하기</button>
 

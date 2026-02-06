@@ -1363,6 +1363,13 @@ ol {
   align-items: center;
   justify-content: center;
   gap: 8px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.interested-companies-list .add-company-to-list-btn:hover {
+  background: #f0f4ff;
+  border-color: var(--primary-color);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .company-items-wrapper {
