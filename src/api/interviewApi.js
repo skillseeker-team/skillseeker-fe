@@ -60,3 +60,38 @@ export const getFeedback = async (id) => {
   });
   return handleResponse(response);
 };
+
+// New Endpoints
+
+export const updateChecklist = async (itemId, status) => {
+  const response = await fetch(`/api/checklists/${itemId}`, {
+    method: 'PATCH',
+    headers,
+    body: JSON.stringify({ status }),
+  });
+  return handleResponse(response);
+};
+
+export const getMyPageSummary = async () => {
+  const response = await fetch('/api/mypage/summary', {
+    method: 'GET',
+    headers,
+  });
+  return handleResponse(response);
+};
+
+export const getMyPageNarrative = async () => {
+  const response = await fetch('/api/mypage/narrative', {
+    method: 'GET',
+    headers,
+  });
+  return handleResponse(response);
+};
+
+export const seedDemoData = async () => {
+  const response = await fetch('/api/demo/seed', {
+    method: 'POST',
+    headers,
+  });
+  return handleResponse(response);
+};

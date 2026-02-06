@@ -36,6 +36,12 @@ function InputForm() {
   });
 
   const onSubmit = async (data) => {
+    // API requires exactly one isHardest: true
+    if (data.worstQuestionIndex === '') {
+      alert('아쉬움이 남는 질문(Worst)을 하나 선택해주세요.');
+      return;
+    }
+
     try {
       // Map form data to API payload
       const payload = {
