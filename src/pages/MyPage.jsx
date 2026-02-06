@@ -9,10 +9,6 @@ const mockData = {
   header: {
     analysisPeriod: '2025.01 - 2025.06',
   },
-  header: {
-    analysisPeriod: '2025.01 - 2025.06',
-  },
-  // userInfo moved to UserContext
   frequentMistakes: {
     sectionDescription: '최근 10회 면접 복기 내용을 기반으로 자동 분류된 실수 패턴입니다.',
     mistakes: [
