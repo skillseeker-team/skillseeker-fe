@@ -6,6 +6,7 @@ import ReportPage from './pages/ReportPage';
 import MyPage from './pages/MyPage';
 import FeedbackListPage from './pages/FeedbackListPage';
 import Company from './pages/Company'; // Import the new Company component
+import { createInterview } from './api/interviewApi';
 import './App.css';
 
 // 기존 입력 폼 컴포넌트 (이름만 부여)
@@ -32,15 +33,36 @@ function InputForm() {
     name: "questions"
   });
 
-  const onSubmit = (data) => {
-    // Generate a simple ID and Save
-    const id = Date.now().toString();
-    const newReport = { ...data, id };
+  const onSubmit = async (data) => {
+    try {
+      // Map form data to API payload
+      const payload = {
+        interviewDate: data.date,
+        company: data.company,
+        role: data.position,
+        atmosphereScore: Number(data.atmosphere),
+        tensionChangeScore: Number(data.tension),
+        memo: data.review,
+        questions: data.questions.map((q, index) => ({
+          questionText: q.question,
+          answerText: q.answer,
+          isHardest: String(index) === String(data.worstQuestionIndex),
+          isBest: String(index) === String(data.bestQuestionIndex)
+        }))
+      };
 
-    const existingData = JSON.parse(localStorage.getItem('interview_records') || '[]');
-    localStorage.setItem('interview_records', JSON.stringify([newReport, ...existingData]));
-
-    navigate(`/report/${id}`);
+      const response = await createInterview(payload);
+      
+      // API response should contain the new ID
+      if (response && response.id) {
+        navigate(`/report/${response.id}`);
+      } else {
+        alert('Failed to create interview record: No ID returned');
+      }
+    } catch (error) {
+      console.error('Error creating interview:', error);
+      alert('Failed to save interview record. Please try again.');
+    }
   };
 
   const mentalOptions = [
