@@ -9,6 +9,7 @@ const mockData = {
   header: {
     analysisPeriod: '2025.01 - 2025.06',
   },
+  // userInfo moved to UserContext
   frequentMistakes: {
     sectionDescription: '최근 10회 면접 복기 내용을 기반으로 자동 분류된 실수 패턴입니다.',
     mistakes: [
@@ -43,42 +44,126 @@ const mockData = {
     methods: [
       {
         id: 1,
-        rankType: '분석 중',
-        title: '긴장도 분석',
-        icon: '📊',
-        methodName: '평균 긴장도',
-        badge: 'Info',
-        effectScore: 3.6,
-        description: '낮을수록 안정적입니다 (1~5점 척도)',
-        effectNote: '',
+        rankType: '✓ 가장 효과적인 방법',
+        title: '면접 직전 긴장 완화 기준',
+        icon: '🌬️',
+        methodName: '4-7-8 호흡 조절',
+        badge: '1위',
+        effectScore: 4.8,
+        description: '평균 긴장도 63% → 28% 감소, 집중도 41% 향상',
+        effectNote: '면접 직전 사용 시 가장 안정적',
         isTopMethod: true,
-      }
+      },
+      {
+        id: 2,
+        icon: '☕',
+        methodName: '따뜻한 차 마시기 + 짧은 산책',
+        badge: '2위',
+        effectScore: 4.1,
+        description: '면접 1시간 전, 걷기 10분 + 차 한 잔 루틴에서 가장 안정적',
+        isTopMethod: false,
+      },
+      {
+        id: 3,
+        icon: '🎵',
+        methodName: '플레이리스트 음악 듣기',
+        badge: '3위',
+        effectScore: 3.4,
+        description: '긴장도는 낮추지만, 약간의 집중력 저하가 함께 나타남',
+        isTopMethod: false,
+      },
+      {
+        id: 4,
+        icon: '💊',
+        methodName: '청심환 복용',
+        badge: '보조',
+        effectScore: 2.6,
+        description: '단독 사용보단 호흡 조절/산책과 함께할 때 효과 상승',
+        isTopMethod: false,
+      },
     ],
     recommendedRoutine: {
       icon: '💡',
-      description: '긴장도가 높다면 호흡 조절과 가벼운 산책을 시도해보세요.',
+      description: '면접 30분 전, 4-7-8 호흡 3세트 → 5분 산책 → 마지막 복기 노트 1회 점검',
     },
   },
   missions: {
-    sectionDescription: '자주 등장하는 체크리스트 템플릿입니다.',
+    sectionDescription: '최근 실수 패턴과 합격자 답변 스타일을 기반으로 구성된 맞춤 미션입니다.',
     categories: [
       {
         id: 1,
         icon: '📈',
-        categoryName: '추천 체크리스트',
-        statusText: `상위 1개`,
-        categoryDescription: '빈도 높은 개선 포인트',
+        categoryName: '스펙 관련 미션',
+        statusText: '3개 중 1개 완료',
+        categoryDescription: '경험의 설득력을 높이는 정량화/정리 미션',
         missions: [
           {
-            id: 0,
-            title: 'CL_ANSWER_60SEC',
-            detail: '5회 추천됨',
-            deadline: '상시',
-            status: '권장',
+            id: 1,
+            title: '프로젝트 A 성과 수치화하기',
+            detail: '성과 지표(매출, 전환율, 사용자 수 등)를 최소 3개 이상 수치로 정리',
+            deadline: '마감: 2025.02 · 예상 소요 40분',
+            status: '진행 중',
             completed: false,
-          }
+          },
+          {
+            id: 2,
+            title: '이직 동기 답변 업그레이드',
+            detail: '현재 답변을 300자 이내로 줄이고, 회사 리서치 내용 2개 이상 반영',
+            deadline: '마감: 2025.02 · 예상 소요 30분',
+            status: '시작 전',
+            completed: false,
+          },
+          {
+            id: 3,
+            title: '자기소개서 핵심 키워드 5개 뽑기',
+            detail: '핵심 키워드를 기준으로 답변 구조(과정 결과 배움) 재정리',
+            deadline: '완료: 2025.01',
+            status: '완료',
+            completed: true,
+          },
         ],
-      }
+      },
+      {
+        id: 2,
+        icon: '🤝',
+        categoryName: '면접 태도 미션',
+        statusText: '4개 중 2개 완료',
+        categoryDescription: '시선 처리, 말투, 표정 등 커뮤니케이션 관련 미션',
+        missions: [
+          {
+            id: 4,
+            title: '모의 면접 1회 진행 (시선 처리 집중)',
+            detail: '답변 후 2초간 눈맞춤 유지, 화면 녹화로 본인 시선 패턴 체크',
+            deadline: '추천: 이번 주 안에 1회 이상',
+            status: '진행 중',
+            completed: false,
+          },
+          {
+            id: 5,
+            title: '두괄식 답변 템플릿 3개 만들기',
+            detail: '지원 동기, 강점, 실패 경험 각각에 대한 1문장 핵심 결론 정리',
+            deadline: '추천: 쉬운 질문부터 15분 집중',
+            status: '시작 전',
+            completed: false,
+          },
+          {
+            id: 6,
+            title: '웃는 표정 유지 연습 (거울 앞 5분)',
+            detail: '입 모양, 눈매를 체크하고 어색하지 않은 미소 각도 찾기',
+            deadline: '완료: 2025.01',
+            status: '완료',
+            completed: true,
+          },
+          {
+            id: 7,
+            title: '말 속도 0.8배로 줄어 말하기 연습',
+            detail: '녹음 후 말 속도 체크, 쉼표 마침표 위치 의식하며 말하기',
+            deadline: '완료: 2025.01',
+            status: '완료',
+            completed: true,
+          },
+        ],
+      },
     ],
     dailyCompletionRate: 54,
   },
@@ -297,7 +382,7 @@ const MyPage = () => {
             </div>
             <p className="card-description">{frequentMistakes.sectionDescription}</p>
             <ul className="mistakes-list">
-              {frequentMistakes.mistakes.length > 0 ? frequentMistakes.mistakes.map((mistake, index) => (
+              {frequentMistakes.mistakes.map((mistake, index) => (
                 <li className="mistake-item" key={mistake.id}>
                   <span className="mistake-rank">{index + 1}</span>
                   <span className="mistake-text">{mistake.text}</span>
@@ -309,23 +394,24 @@ const MyPage = () => {
                   </div>
                   <span className="mistake-count">{mistake.count}회</span>
                 </li>
-              )) : <li className="mistake-item">데이터가 부족합니다.</li>}
+              ))}
             </ul>
           </section>
 
           <section className="card questions-card">
             <div className="card-header">
               <h3 className="card-title">나에게 자주 나오는 질문</h3>
-              지             </div>
+            </div>
             <ul className="questions-list">
-              {questionsList.length > 0 ? questionsList.slice(0, 5).map((question) => (
+              {frequentQuestions.questions.map((question) => (
                 <li className="question-item" key={question.id}>
+                  <span className="question-rank">{question.id}</span>
                   <div className="question-content">
                     <p className="question-text">{question.text}</p>
                     <p className="question-tip">{question.tip}</p>
                   </div>
                 </li>
-              )) : <li className="question-item">데이터가 부족합니다.</li>}
+              ))}
             </ul>
           </section>
         </div>
@@ -334,7 +420,7 @@ const MyPage = () => {
         <div className="grid-col-right">
           <section className="card mental-care-card">
             <div className="card-header">
-              <h3 className="card-title">멘탈 관리 분석</h3>
+              <h3 className="card-title">나에게 가장 효과적인 멘탈 관리법</h3>
             </div>
             <p className="card-description">{mentalCare.sectionDescription}</p>
             <div className="mental-care-methods">
@@ -345,7 +431,8 @@ const MyPage = () => {
                 >
                   {method.isTopMethod && (
                     <div className="top-method-header">
-                      <span>👑 분석 요약</span>
+                      <span>👑 가장 효과적인 방법</span>
+                      <span>면접 직전 긴장 완화 기준</span>
                     </div>
                   )}
                   <div className="method-body">
@@ -355,7 +442,8 @@ const MyPage = () => {
                       <span className="method-rank-badge">{method.badge}</span>
                     </div>
                     <div className="method-effect">
-                      점수 <span className="effect-score">{method.effectScore}</span>
+                      효과 <span className="effect-score">{method.effectScore}</span>
+                      <span className="star-rating">{'★'.repeat(Math.round(method.effectScore))}{'☆'.repeat(5 - Math.round(method.effectScore))}</span>
                     </div>
                   </div>
                   <p className="method-description">{method.description}</p>
@@ -387,7 +475,7 @@ const MyPage = () => {
                   <span className="mission-category-status">{category.statusText}</span>
                 </div>
                 <ul className="mission-list">
-                  {category.missions.length > 0 ? category.missions.map((mission) => (
+                  {category.missions.map((mission) => (
                     <li
                       key={mission.id}
                       className={`mission-item ${mission.completed ? 'completed' : ''}`}
@@ -397,16 +485,16 @@ const MyPage = () => {
                         className="mission-category-checkbox"
                         id={`mission-${mission.id}`}
                         checked={mission.completed}
-                        readOnly // Read-only for summary view
+                        onChange={() => handleToggleMission(category.id, mission.id)}
                       />
                       <label htmlFor={`mission-${mission.id}`} className="mission-item-content">
                         <span className="mission-title">{mission.title}</span>
                         <span className="mission-detail">{mission.detail}</span>
                         <span className="mission-deadline">{mission.deadline}</span>
                       </label>
-                      <span className={`mission-status-tag ${mission.status}`}>{mission.status}</span>
+                      <span className={`mission-status-tag ${mission.status.replace(/\s+/g, '-').toLowerCase()}`}>{mission.status}</span>
                     </li>
-                  )) : <li>추천 데이터가 없습니다.</li>}
+                  ))}
                 </ul>
               </div>
             ))}
