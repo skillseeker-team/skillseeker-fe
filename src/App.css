@@ -374,6 +374,11 @@ ol {
   max-width: var(--max-width-container);
   margin: 0;
   padding: 0;
+  padding-top: 24px;
+  padding-left: 24px;
+  padding-right: 24px;
+  gap: 24px;
+
 }
 
 /* Page Title Section */
