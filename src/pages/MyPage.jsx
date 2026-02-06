@@ -1,21 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useContext } from 'react';
+import { UserContext } from '../context/UserContext';
+import { useNavigate } from 'react-router-dom';
+import { Camera, Trash2 } from 'lucide-react';
+import Avatar from '../components/ui/Avatar';
 import '../App.css';
 
 const mockData = {
   header: {
     analysisPeriod: '2025.01 - 2025.06',
   },
-  userInfo: {
-    userName: '김지원',
-    userStatus: '취업 준비 중',
-    userDescription: '최근 6개월 동안의 면접 복기를 기반으로 한 개인 맞춤 인사이트입니다.',
-    profileImage: '/visuals/profile_placeholder.png', // Placeholder image
-    stats: [
-      { id: 1, value: '18회', label: '누적 면접 횟수', icon: '📝' },
-      { id: 2, value: '1.8일', label: '멘탈 회복 평균', icon: '😊' },
-      { id: 3, value: '76%', label: '피드백 반영률', icon: '⚡' },
-    ],
+  header: {
+    analysisPeriod: '2025.01 - 2025.06',
   },
+  // userInfo moved to UserContext
   frequentMistakes: {
     sectionDescription: '최근 10회 면접 복기 내용을 기반으로 자동 분류된 실수 패턴입니다.',
     mistakes: [
@@ -176,8 +173,14 @@ const mockData = {
 };
 
 const MyPage = () => {
-  const { header, userInfo, frequentMistakes, frequentQuestions, mentalCare, missions: initialMissions } = mockData;
+  const navigate = useNavigate();
+  const fileInputRef = useRef(null);
+  const { userInfo, setUserInfo } = useContext(UserContext); // Use context instead of local state
+  const { header, frequentMistakes, frequentQuestions, mentalCare, missions: initialMissions } = mockData;
+  // const [userInfo, setUserInfo] = useState(initialUserInfo); // Removed local state
   const [missions, setMissions] = useState(initialMissions);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editFormData, setEditFormData] = useState(userInfo); // Initialize with context data
 
   const handleToggleMission = (categoryId, missionId) => {
     setMissions((prev) => {
@@ -221,23 +224,144 @@ const MyPage = () => {
     });
   };
 
+  const handleEditClick = () => {
+    setEditFormData(userInfo);
+    setIsEditing(true);
+  };
+
+  const handleCancelClick = () => {
+    setIsEditing(false);
+    setEditFormData(userInfo);
+  };
+
+  const handleSaveClick = () => {
+    setUserInfo(editFormData);
+    setIsEditing(false);
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setEditFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setEditFormData((prev) => ({
+          ...prev,
+          profileImage: reader.result,
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleImageDelete = (e) => {
+    e.stopPropagation();
+    setEditFormData((prev) => ({
+      ...prev,
+      profileImage: null,
+    }));
+  };
+
+  const handleAvatarClick = () => {
+    if (isEditing && fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
   return (
     <div className="dashboard-container">
       <main className="dashboard-grid">
         {/* User Info Section (Full Width) */}
         <section className="card profile-card">
           <div className="profile-summary">
-            <img src={userInfo.profileImage} alt="Profile" className="profile-image" />
+            <div className={`avatar-wrapper ${isEditing ? 'editable' : ''}`} onClick={handleAvatarClick}>
+              <Avatar
+                name={isEditing ? editFormData.userName : userInfo.userName}
+                image={isEditing ? editFormData.profileImage : userInfo.profileImage}
+                className="profile-image"
+              />
+              {isEditing && (
+                <div className="avatar-overlay">
+                  <Camera size={24} color="white" />
+                  {editFormData.profileImage && (
+                    <button
+                      type="button"
+                      className="avatar-delete-btn"
+                      onClick={handleImageDelete}
+                      title="기본 이미지로 변경"
+                    >
+                      <Trash2 size={16} color="white" />
+                    </button>
+                  )}
+                </div>
+              )}
+              <input
+                type="file"
+                ref={fileInputRef}
+                style={{ display: 'none' }}
+                onChange={handleImageChange}
+                accept="image/*"
+              />
+            </div>
             <div className="profile-details">
-              <h3 className="profile-name">
-                {userInfo.userName}
-                <span className="status-badge">{userInfo.userStatus}</span>
-              </h3>
-              <p className="profile-description">{userInfo.userDescription}</p>
+              {isEditing ? (
+                <div className="edit-form">
+                  <input
+                    type="text"
+                    name="userName"
+                    value={editFormData.userName}
+                    onChange={handleInputChange}
+                    className="edit-input name-input"
+                    placeholder="이름"
+                  />
+                  <select
+                    name="userStatus"
+                    value={editFormData.userStatus}
+                    onChange={handleInputChange}
+                    className="edit-input status-input"
+                    placeholder="상태 (예: 취업 준비 중)"
+                  >
+                    <option value="">상태 선택</option>
+                    <option value="취업 준비 중">취업 준비 중</option>
+                    <option value="재직 중">재직 중</option>
+                    <option value="퇴사">퇴사</option>
+                  </select>
+                  <textarea
+                    name="userDescription"
+                    value={editFormData.userDescription}
+                    onChange={handleInputChange}
+                    className="edit-input description-input"
+                    placeholder="자기소개"
+                    rows={2}
+                  />
+                </div>
+              ) : (
+                <>
+                  <h3 className="profile-name">
+                    {userInfo.userName}
+                    <span className="status-badge">{userInfo.userStatus}</span>
+                  </h3>
+                  <p className="profile-description">{userInfo.userDescription}</p>
+                </>
+              )}
             </div>
           </div>
           <div className="profile-actions">
-            <button className="btn btn-secondary">✏️ 프로필 수정</button>
+            {isEditing ? (
+              <div className="action-buttons">
+                <button className="btn btn-secondary" onClick={handleCancelClick}>❌ 취소</button>
+                <button className="btn btn-primary" onClick={handleSaveClick}>✅ 저장</button>
+              </div>
+            ) : (
+              <button className="btn btn-secondary" onClick={handleEditClick}>✏️ 프로필 수정</button>
+            )}
           </div>
           <div className="profile-stats">
             {userInfo.stats.map((stat) => (
@@ -257,7 +381,7 @@ const MyPage = () => {
           <section className="card mistakes-card">
             <div className="card-header">
               <h3 className="card-title">자주 하는 실수 TOP 5</h3>
-              <button className="btn btn-tertiary">전체 복기 보기</button>
+              <button className="btn btn-tertiary" onClick={() => navigate('/feedbacks')}>전체 면접 기록 보기</button>
             </div>
             <p className="card-description">{frequentMistakes.sectionDescription}</p>
             <ul className="mistakes-list">
@@ -280,8 +404,7 @@ const MyPage = () => {
           <section className="card questions-card">
             <div className="card-header">
               <h3 className="card-title">나에게 자주 나오는 질문</h3>
-              <span className="card-header-tag">최근 10회 기준</span>
-            </div>
+              지             </div>
             <ul className="questions-list">
               {frequentQuestions.questions.map((question) => (
                 <li className="question-item" key={question.id}>
@@ -333,7 +456,6 @@ const MyPage = () => {
             <div className="recommended-routine">
               <p className="routine-title">✨ 추천 루틴</p>
               <p className="routine-description">{mentalCare.recommendedRoutine.description}</p>
-              <button className="btn btn-primary-light">루틴으로 저장</button>
             </div>
           </section>
         </div>
@@ -342,10 +464,6 @@ const MyPage = () => {
         <section className="card missions-card">
           <div className="card-header">
             <h3 className="card-title">역량 향상 및 보완 미션</h3>
-            <div>
-              <button className="btn btn-tertiary">오늘 할 일만 보기</button>
-              <button className="btn btn-primary">➕ 미션 추가</button>
-            </div>
           </div>
           <p className="card-description">{missions.sectionDescription}</p>
           <div className="mission-categories-grid">
@@ -386,7 +504,7 @@ const MyPage = () => {
           </div>
           <div className="missions-footer">
             <div className="daily-progress">
-              <label>오늘의 미션 완료율</label>
+              <label>🧮 미션 완료율</label>
               <div className="progress-bar">
                 <div
                   className="progress-bar-fill"
@@ -395,7 +513,6 @@ const MyPage = () => {
               </div>
               <span className="progress-percentage">{missions.dailyCompletionRate}%</span>
             </div>
-            <button className="btn btn-secondary">≡ 이번 주 우선순위 재조정</button>
           </div>
         </section>
       </main>
