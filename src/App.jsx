@@ -1,35 +1,27 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import MyPage from './pages/MyPage'; // Gemini가 만들어준 파일 경로
+import './App.css';
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <Router>
+      <div className="App">
+        <Routes>
+          {/* 기본 경로는 간단한 환영 메시지 */}
+          <Route path="/" element={
+            <div style={{ textAlign: 'center', marginTop: '50px' }}>
+              <h1>Skillseeker 프로젝트에 오신 걸 환영합니다!</h1>
+              <p>마이페이지를 확인하려면 주소 뒤에 <b>/mypage</b>를 입력하세요.</p>
+              <a href="/mypage" style={{ color: '#007bff', textDecoration: 'underline' }}>마이페이지로 이동하기</a>
+            </div>
+          } />
+
+          {/* 마이페이지 경로 연결 */}
+          <Route path="/mypage" element={<MyPage />} />
+        </Routes>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    </Router>
+  );
 }
 
-export default App
+export default App;
