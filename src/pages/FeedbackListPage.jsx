@@ -97,9 +97,11 @@ function FeedbackListPage() {
                 {report.role || '직무 미입력'}
               </div>
 
-              {/* Satisfaction is not in list API, removing or keeping static if needed. 
-                  If API list item doesn't have score, we might hide it or show createdAt */}
               <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px solid #f0f0f0', display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem' }}>
+                <span style={{color: 'var(--text-muted)'}}>질문 수</span>
+                <span style={{fontWeight: '600', color: '#666'}}>
+                  {report.questionCount || 0}개
+                </span>
                 <span style={{color: 'var(--text-muted)'}}>등록일</span>
                 <span style={{fontWeight: '600', color: '#666'}}>
                   {new Date(report.createdAt).toLocaleDateString()}
