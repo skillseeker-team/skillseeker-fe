@@ -374,8 +374,6 @@ ol {
   max-width: var(--max-width-container);
   margin: 0;
   padding: 0;
-  padding-top: 80px;
-  /* Add padding for the fixed global header (60px height + 20px margin) */
 }
 
 /* Page Title Section */
@@ -482,6 +480,8 @@ ol {
       "profile profile"
       "left-col right-col"
       "missions missions";
+    margin-top: 0;
+    padding-top: 0;
   }
 
   .profile-card {
@@ -611,10 +611,10 @@ ol {
   display: flex;
   align-items: center;
   gap: var(--space-lg);
+  margin-top: 0 !important;
+  padding-top: 0 !important;
   flex-grow: 1;
-  /* Allows it to take available space */
   margin-bottom: var(--space-md);
-  /* Space below on smaller screens */
 }
 
 @media (min-width: 768px) {
