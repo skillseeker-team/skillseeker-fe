@@ -5,6 +5,7 @@ import { Sparkles, Plus, Send, User, ChevronDown, Activity, Heart, Music, Pill, 
 import ReportPage from './pages/ReportPage';
 import MyPage from './pages/MyPage';
 import FeedbackListPage from './pages/FeedbackListPage';
+import Company from './pages/Company'; // Import the new Company component
 import './App.css';
 
 // 기존 입력 폼 컴포넌트 (이름만 부여)
@@ -325,7 +326,7 @@ function Header() {
       </Link>
       <nav className="nav">
         <Link to="/feedbacks" className={`nav-item ${isActive('/feedbacks')}`}>피드백</Link>
-        <Link to="#" className="nav-item">기업 공고</Link>
+        <Link to="/company" className={`nav-item ${isActive('/company')}`}>기업 공고</Link> {/* Added Company Link */}
         <Link to="/mypage" className={`nav-item ${isActive('/mypage')}`}>마이페이지</Link>
         <div className="profile-img"></div>
       </nav>
@@ -347,6 +348,8 @@ function App() {
             <Route path="/feedbacks" element={<FeedbackListPage />} />
             {/* 리포트 상세 */}
             <Route path="/report/:id" element={<ReportPage />} />
+            {/* 기업 공고 페이지 */}
+            <Route path="/company" element={<Company />} />
             {/* 마이페이지 */}
             <Route path="/mypage" element={<MyPage />} />
           </Routes>
