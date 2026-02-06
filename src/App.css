@@ -271,7 +271,7 @@ textarea:focus {
 /* 1. CSS Reset and Base Setup */
 *,
 *::before,
-**::after {
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
