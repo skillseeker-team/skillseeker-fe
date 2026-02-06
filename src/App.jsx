@@ -39,7 +39,7 @@ function App() {
   const currentMental = watch('mentalCare');
 
   const toggleMental = (id) => {
-    const newVal = currentMental.includes(id) 
+    const newVal = currentMental.includes(id)
       ? currentMental.filter(item => item !== id)
       : [...currentMental, id];
     setValue('mentalCare', newVal);
@@ -75,7 +75,7 @@ function App() {
               <span className="section-number">1</span>
               기본 정보
             </div>
-            
+
             <div className="form-row">
               <div className="input-group">
                 <label>면접 날짜</label>
@@ -86,7 +86,7 @@ function App() {
                 <input type="text" placeholder="예: 마인드코퍼레이션" {...register('company')} />
               </div>
             </div>
-            
+
             <div className="input-group" style={{ marginBottom: '24px' }}>
               <label>지원 직무</label>
               <input type="text" placeholder="예: 서비스 기획자" {...register('position')} />
@@ -96,8 +96,8 @@ function App() {
               <label>면접 분위기 <span style={{ color: 'var(--primary-color)' }}>보통 (3)</span></label>
               <div className="scale-container">
                 {[1, 2, 3, 4, 5].map(val => (
-                  <button 
-                    key={val} 
+                  <button
+                    key={val}
                     type="button"
                     className={`scale-btn ${watch('atmosphere') === val ? 'active' : ''}`}
                     onClick={() => setValue('atmosphere', val)}
@@ -129,33 +129,25 @@ function App() {
                   <span className="q-label">Q{index + 1}</span>
                   <ChevronDown size={18} color="var(--text-muted)" />
                 </div>
-                
+
                 <div className="input-group" style={{ marginBottom: '16px' }}>
                   <label>질문</label>
-                  <input 
-                    type="text" 
-                    placeholder="예: 자기소개와 지원 동기를 말씀해 주세요." 
+                  <input
+                    type="text"
+                    placeholder="예: 자기소개와 지원 동기를 말씀해 주세요."
                     {...register(`questions.${index}.question`)}
                   />
                 </div>
 
                 <div className="input-group" style={{ marginBottom: '16px' }}>
                   <label>나의 답변</label>
-                  <textarea 
-                    placeholder="당시 어떻게 답변했는지 최대한 구체적으로 적어보세요." 
+                  <textarea
+                    placeholder="당시 어떻게 답변했는지 최대한 구체적으로 적어보세요."
                     rows="3"
                     {...register(`questions.${index}.answer`)}
                   />
                 </div>
 
-                <div className="input-group">
-                  <label>메모 (선택)</label>
-                  <input 
-                    type="text" 
-                    placeholder="면접관 반응, 아쉬운 점 등을 적어보세요." 
-                    {...register(`questions.${index}.memo`)}
-                  />
-                </div>
                 {fields.length > 1 && (
                   <button type="button" onClick={() => remove(index)} style={{ marginTop: '10px', fontSize: '0.7rem', color: 'red', border: 'none', background: 'none', cursor: 'pointer' }}>삭제</button>
                 )}
@@ -166,12 +158,85 @@ function App() {
               <Plus size={16} /> 질문 추가하기
             </button>
 
+            {/* Best & Worst Question Selection */}
+            {fields.length > 0 && (
+              <div className="form-row" style={{ marginTop: '32px', padding: '24px', background: '#f8faff', borderRadius: '12px', border: '1px solid #eef2ff' }}>
+                <div className="input-group">
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span style={{ background: '#e0e7ff', color: 'var(--primary-color)', padding: '4px 8px', borderRadius: '4px', fontSize: '0.8rem' }}>Best</span>
+                    가장 잘 답변한 질문
+                  </label>
+                  <div style={{ position: 'relative' }}>
+                    <select 
+                      {...register('bestQuestionIndex')}
+                      style={{ 
+                        width: '100%', 
+                        padding: '12px 16px', 
+                        border: '1px solid var(--border-color)', 
+                        borderRadius: '8px', 
+                        fontSize: '0.95rem', 
+                        backgroundColor: 'white',
+                        appearance: 'none',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      <option value="">선택해주세요</option>
+                      {watch('questions')?.map((q, idx) => (
+                        <option 
+                          key={idx} 
+                          value={idx} 
+                          disabled={watch('worstQuestionIndex') === String(idx)}
+                        >
+                          {`Q${idx + 1}. ${q.question ? (q.question.length > 20 ? q.question.substring(0, 20) + '...' : q.question) : '(질문 내용 없음)'}`}
+                        </option>
+                      ))}
+                    </select>
+                    <ChevronDown size={16} style={{ position: 'absolute', right: '16px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: 'var(--text-muted)' }} />
+                  </div>
+                </div>
+
+                <div className="input-group">
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span style={{ background: '#fee2e2', color: '#ef4444', padding: '4px 8px', borderRadius: '4px', fontSize: '0.8rem' }}>Worst</span>
+                    아쉬움이 남는 질문
+                  </label>
+                  <div style={{ position: 'relative' }}>
+                    <select 
+                      {...register('worstQuestionIndex')}
+                      style={{ 
+                        width: '100%', 
+                        padding: '12px 16px', 
+                        border: '1px solid var(--border-color)', 
+                        borderRadius: '8px', 
+                        fontSize: '0.95rem', 
+                        backgroundColor: 'white',
+                        appearance: 'none',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      <option value="">선택해주세요</option>
+                      {watch('questions')?.map((q, idx) => (
+                        <option 
+                          key={idx} 
+                          value={idx}
+                          disabled={watch('bestQuestionIndex') === String(idx)}
+                        >
+                          {`Q${idx + 1}. ${q.question ? (q.question.length > 20 ? q.question.substring(0, 20) + '...' : q.question) : '(질문 내용 없음)'}`}
+                        </option>
+                      ))}
+                    </select>
+                    <ChevronDown size={16} style={{ position: 'absolute', right: '16px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: 'var(--text-muted)' }} />
+                  </div>
+                </div>
+              </div>
+            )}
+
             <div className="input-group" style={{ marginTop: '24px' }}>
               <label>내 답변 만족도 <span style={{ color: 'var(--primary-color)' }}>충분히 답변함 (4)</span></label>
               <div className="scale-container">
                 {[1, 2, 3, 4, 5].map(val => (
-                  <button 
-                    key={val} 
+                  <button
+                    key={val}
                     type="button"
                     className={`scale-btn ${watch('satisfaction') === val ? 'active' : ''}`}
                     onClick={() => setValue('satisfaction', val)}
@@ -203,8 +268,8 @@ function App() {
               <label>컨디션 조절 방법 (중복 선택 가능)</label>
               <div className="chip-container">
                 {mentalOptions.map(opt => (
-                  <div 
-                    key={opt.id} 
+                  <div
+                    key={opt.id}
                     className={`chip ${currentMental.includes(opt.id) ? 'active' : ''}`}
                     onClick={() => toggleMental(opt.id)}
                   >
@@ -219,8 +284,8 @@ function App() {
               <label>긴장도 변화 <span style={{ color: 'var(--primary-color)' }}>약간 완화됨 (4)</span></label>
               <div className="scale-container">
                 {[1, 2, 3, 4, 5].map(val => (
-                  <button 
-                    key={val} 
+                  <button
+                    key={val}
                     type="button"
                     className={`scale-btn ${watch('tension') === val ? 'active' : ''}`}
                     onClick={() => setValue('tension', val)}
@@ -239,7 +304,7 @@ function App() {
           <button type="submit" className="submit-btn">
             <Sparkles size={18} /> 저장 및 분석하기
           </button>
-          
+
           <p style={{ textAlign: 'center', fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '16px' }}>
             분석 리포트는 마이페이지에서 다시 확인할 수 있습니다.
           </p>
