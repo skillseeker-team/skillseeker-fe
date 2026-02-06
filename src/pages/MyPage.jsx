@@ -9,6 +9,9 @@ const mockData = {
   header: {
     analysisPeriod: '2025.01 - 2025.06',
   },
+  header: {
+    analysisPeriod: '2025.01 - 2025.06',
+  },
   // userInfo moved to UserContext
   frequentMistakes: {
     sectionDescription: '최근 10회 면접 복기 내용을 기반으로 자동 분류된 실수 패턴입니다.',
@@ -59,10 +62,10 @@ const mockData = {
       icon: '💡',
       description: '긴장도가 높다면 호흡 조절과 가벼운 산책을 시도해보세요.',
     },
-  },
+  };
 
   // Missions (Placeholder using checklistTop)
-  missions: {
+  const missions = {
     sectionDescription: '자주 등장하는 체크리스트 템플릿입니다.',
     categories: [
       {
